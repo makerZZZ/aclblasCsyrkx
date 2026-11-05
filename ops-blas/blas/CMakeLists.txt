@@ -68,7 +68,7 @@ if(DEFINED TEST_NAMES AND NOT "${TEST_NAMES}" STREQUAL "")
     # host 代码直接链接 gemm_kernel_do（定义于 blas/gemm/arch35/gemm_kernel.cpp）的算子：
     # 单算子构建（--ops）时保留该源文件，保证测试可执行文件链接通过。
     # 新增算子复用 gemm_kernel_do 时须同步登记到本表。
-    set(_GEMM_KERNEL_DEP_OPS "cherk;cher2k;cherkx")
+    set(_GEMM_KERNEL_DEP_OPS "cherk;cher2k;cherkx;csyrkx")
     set(_KEEP_GEMM_KERNEL FALSE)
     foreach(_t ${TEST_NAMES})
         if(_t IN_LIST _GEMM_KERNEL_DEP_OPS)

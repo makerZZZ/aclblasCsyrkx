@@ -308,3 +308,80 @@ int main()
     return 0;
 }
 ```
+
+## aclblasCsyrkx
+
+### 算子概述
+
+单精度复数（COMPLEX64）对称秩-k 扩展更新。与 `aclblasSsyrkx` 结构相同（A、B 为独立矩阵，
+C 为对称矩阵且仅更新 uplo 三角），标量 alpha、beta 均为复数，运算为
+`C = alpha * op(A) * op(B)^T + beta * C`。
+
+- `trans = ACLBLAS_OP_N`：A、B 为 n×k，`C = alpha*A*B^T + beta*C`
+- `trans = ACLBLAS_OP_T`：A、B 为 k×n，`C = alpha*A^T*B + beta*C`
+- `trans = ACLBLAS_OP_C`：**与 OP_T 完全等价，不取共轭**。syrkx 的结果矩阵是对称
+  （非 Hermitian）矩阵，共轭转置会破坏对称性；`cublasCsyrkx` 对 `CUBLAS_OP_C` 同样按
+  转置执行。
+
+### arch35 实现方案（Atlas 950PR）
+
+```
+Phase 0 (AIV × 2): A -> Ar, Ai；B -> Br, Bi（复数拆分为实/虚 float 矩阵）
+Phase 1 (AIC × 4): 4M 实数 GEMM
+    trans=N : t1=Ar*Br^T, t2=Ai*Bi^T, t3=Ar*Bi^T, t4=Ai*Br^T
+    trans=T : t1=Ar^T*Br, t2=Ai^T*Bi, t3=Ar^T*Bi, t4=Ai^T*Br
+    P_r = t1 - t2, P_i = t3 + t4
+Phase 2 (AIV): 复数 alpha/beta 合成后仅写 uplo 三角
+    Cr  = alpha_r*P_r - alpha_i*P_i
+    Ci  = alpha_r*P_i + alpha_i*P_r
+    C   = (Cr + i*Ci) + beta*C_old
+```
+
+- `k = 0` 或 `alpha = (0,0)`：跳过 deinterleave/GEMM，仅对 uplo 三角执行 `C = beta*C`
+  （`beta = 0` 时置零，不读取 C 旧值），另一三角不引用、不改写。
+- `n = 0`：参数校验（含枚举、前导维、标量非空）通过后 quick return，不执行计算、不写 C。
+- `beta = (0,0)` 时 uplo 三角不读取 C 旧值，C 中的 NaN/Inf 不会扩散到结果。
+- 非 uplo 三角不读取、不写回；LOWER 对角块为单次整列存储，需要先把该列的
+  非 uplo 段以 C 旧值恢复进 UB 再一并写回（值与调用前逐位一致）。
+
+### 接口定义
+
+```cpp
+aclblasStatus_t aclblasCsyrkx(
+    aclblasHandle_t handle,
+    aclblasFillMode_t uplo,      // ACLBLAS_UPPER / ACLBLAS_LOWER
+    aclblasOperation_t trans,    // ACLBLAS_OP_N / OP_T / OP_C（OP_C 等价 OP_T）
+    int n, int k,
+    const aclblasComplex* alpha,
+    const aclblasComplex* A, int lda,
+    const aclblasComplex* B, int ldb,
+    const aclblasComplex* beta,
+    aclblasComplex* C, int ldc);
+```
+
+### 参数与约束
+
+| 参数 | 说明 |
+|------|------|
+| handle | 非空，绑定 stream |
+| uplo | `ACLBLAS_UPPER` / `ACLBLAS_LOWER`，其他值 → `ACLBLAS_STATUS_INVALID_VALUE` |
+| trans | `ACLBLAS_OP_N` / `OP_T` / `OP_C`，其他值 → `ACLBLAS_STATUS_INVALID_VALUE` |
+| n, k | ≥ 0，负值 → `ACLBLAS_STATUS_INVALID_VALUE` |
+| alpha, beta | 复数标量，Host 或 Device 指针（两者须同为 Host 或同为 Device），空指针 → `ACLBLAS_STATUS_INVALID_VALUE` |
+| A, B | 列主序，`lda/ldb >= max(1, trans=N ? n : k)`；仅当 `alpha != 0 && k > 0` 时要求非空 |
+| C | n×n 列主序，`ldc >= max(1, n)`；`n > 0` 时要求非空；仅写 uplo 三角 |
+| 非连续/broadcast/dynamic shape | 不支持 |
+
+确定性：固定 tiling、固定累加路径，同输入多次执行结果逐位一致。
+
+### workspace
+
+GEMM 路径需 `4 × n × align(n,16) × 4B`（4 个临时实矩阵）+
+`4 × physRows × physCols × 4B`（Ar/Ai/Br/Bi），超 `ACLBLAS_MAX_WORKSPACE_SIZE`（2 GiB）
+返回 `ACLBLAS_STATUS_ALLOC_FAILED`；`alpha = 0` 或 `k = 0` 的纯缩放路径不申请 workspace。
+
+### 精度
+
+COMPLEX64 按 FLOAT32 分量判定（实部、虚部分别统计）：atol = rtol = 2⁻¹³，
+matched_ratio ≥ 0.99，max_abs_error ≤ max(1e-2, 32×ULP)。非有限值按任务书 §3.2 第 4 条
+（NaN/同号 Inf 等效）单独判定，不计入 matched_ratio。
