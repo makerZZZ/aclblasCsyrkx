@@ -1,0 +1,73 @@
+#!/bin/bash
+# Copyright (c) 2025-2026 Huawei Technologies Co., Ltd.
+# This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+# CANN Open Software License Agreement Version 2.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ============================================================================
+
+set -euo pipefail
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)
+REPO_ROOT=$(dirname "$SCRIPT_DIR")
+
+FORMAT_DIR="${1:-${REPO_ROOT}}"
+# issue #727: 校验失败必须显式退出——仅 echo 会继续走到下方 cd 并以 cd 的
+# 退出码间接终止，自定义提示与真实失败原因脱节
+if [[ ! -d ${FORMAT_DIR} ]]; then
+    echo "Error: format target '${FORMAT_DIR}' is not a directory." >&2
+    echo "Usage: $0 [directory]  (defaults to the repo root)" >&2
+    exit 1
+fi
+# 统一为物理绝对路径，避免相对路径与排除条件使用不同基准
+FORMAT_DIR=$(cd "$FORMAT_DIR" && pwd -P)
+
+CLANG_FORMAT="${CLANG_FORMAT:-clang-format}"
+STYLE_FILE="$REPO_ROOT/.clang-format"
+
+if [ ! -f "$STYLE_FILE" ]; then
+    echo "Error: .clang-format not found at $STYLE_FILE" >&2
+    exit 1
+fi
+
+if ! command -v "$CLANG_FORMAT" &>/dev/null; then
+    echo "Error: $CLANG_FORMAT not found. Install clang-format or set CLANG_FORMAT env var." >&2
+    exit 1
+fi
+
+echo "Using $CLANG_FORMAT ..."
+"$CLANG_FORMAT" --version
+
+EXCLUDE_DIRS=(
+    "build/"
+    "build_out/"
+    "third_party/"
+    ".git/"
+)
+
+FIND_EXPR=()
+for dir in "${EXCLUDE_DIRS[@]}"; do
+    # find 匹配目录节点时路径不含末尾斜杠，需去掉目录项的末尾斜杠
+    FIND_EXPR+=( -path "$REPO_ROOT/${dir%/}" -prune -o )
+done
+
+mapfile -d '' FILES < <(
+    find "$FORMAT_DIR" "${FIND_EXPR[@]}" \
+        \( -name '*.cpp' -o -name '*.h' -o -name '*.hpp' -o -name '*.cc' -o -name '*.hh' -o -name '*.cxx' -o -name '*.hxx' \) \
+        -type f -print0
+)
+
+TOTAL="${#FILES[@]}"
+echo "Found $TOTAL files to format."
+
+if [ "$TOTAL" -eq 0 ]; then
+    echo "No files to format."
+    exit 0
+fi
+
+"$CLANG_FORMAT" -i --style=file --verbose "${FILES[@]}" 2>&1
+
+echo ""
+echo "Done! Formatted $TOTAL files."

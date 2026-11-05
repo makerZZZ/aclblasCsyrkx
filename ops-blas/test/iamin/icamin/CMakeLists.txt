@@ -1,0 +1,9 @@
+# ----------------------------------------------------------------------------------------------------------
+# Copyright (c) 2026 Huawei Technologies Co., Ltd.
+# ----------------------------------------------------------------------------------------------------------
+
+if("arch35" IN_LIST SOC_ARCH_DIRS)
+    ops_blas_add_gtest_tests(${OPS_BLAS} icamin_test)
+else()
+    ops_blas_add_tests(${OPS_BLAS})
+endif()

@@ -1,0 +1,90 @@
+# binary files
+*.so
+
+cmake-build-debugindocker/
+.DS_Store
+# distribution and packaging
+build/
+build_out/
+out/
+output/
+dist/
+*.egg-info/
+*.egg
+*.whl
+/third_party
+
+# vim cache
+*.swp
+
+# python cache
+*.pyc
+__pycache__
+MANIFEST.in
+
+# python ut/st
+cov_report/
+report/
+/data/
+*.dump
+!**/st/msopgen/simulator/*.dump
+tf_plugin_model.pb
+V*_onnx_plugin_model.onnx
+
+# protobuf
+*.pb.h
+*.pb.c
+
+# cann tmp
+lib/
+kernel_meta/
+
+# dump output
+dump_output/
+
+# Jetbrain
+.idea
+cmake-build-debug
+cmake-build-release
+
+# Visual Studio
+.vs
+
+# Visual Studio Code
+.vscode
+*.tmp
+*.temp
+
+
+# UT report file
+ut_report.txt
+
+# ascend package download dir
+ascend_download
+
+# makeself
+makeself
+
+# tbetoolkits log files
+tbetoolkits-*.log
+*_result.csv
+
+# profiler output
+perf/
+
+# agent
+.claude
+.opencode
+.agent
+.cannbot
+AGENTS.md
+opencode.json
+
+# OAT scan reports (scripts/oat_check.sh)
+oat_reports/
+log/
+
+# Local model config (generated from template)
+agent/agents/model_config.json
+operators/
+outbox/

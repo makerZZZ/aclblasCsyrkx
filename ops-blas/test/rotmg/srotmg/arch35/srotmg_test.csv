@@ -1,0 +1,31 @@
+case_name,description,expect_result,d1,d2,x1,y1,random_seed
+TC_L0_001,d1<0 => sflag=-1 zero all,SUCCESS,-1.0,2.0,3.0,4.0,20260501
+TC_L0_002,y1=0 => sflag=-2 identity,SUCCESS,2.0,3.0,4.0,0.0,20260502
+TC_L0_003,sq1>sq2 => sflag=0,SUCCESS,4.0,1.0,3.0,1.0,20260503
+TC_L0_004,sq1<=sq2 sq2>=0 => sflag=1,SUCCESS,1.0,4.0,1.0,3.0,20260504
+TC_L0_005,sq2<0 => sflag=-1,SUCCESS,1.0,-2.0,1.0,2.0,20260505
+TC_L1_001,d1=0 fallback => sflag=1,SUCCESS,0.0,1.0,2.0,1.0,20260510
+TC_L1_002,large d1 scale check => sflag=-1,SUCCESS,2.0e8,1.0,1.0,1.0,20260511
+TC_L1_003,large d2 scale check => sflag=-1,SUCCESS,1.0,2.0e8,1.0,1.0,20260512
+TC_L1_004,tiny d1 scale check => sflag=-1,SUCCESS,1.0e-9,1.0,1.0,1.0,20260513
+TC_L1_005,tiny d2 scale check => sflag=-1,SUCCESS,1.0,1.0e-9,1.0,1.0,20260514
+TC_L1_006,all ones basic case,SUCCESS,1.0,1.0,1.0,1.0,20260515
+TC_L1_007,all equal sq1==sq2 => sflag=1,SUCCESS,2.0,2.0,1.0,1.0,20260516
+TC_L1_008,tiny x1 large y1 => sflag=1,SUCCESS,1.0,1.0,1.0e-4,100.0,20260517
+TC_L1_009,large x1 tiny y1 => sflag=0,SUCCESS,1.0,1.0,100.0,1.0e-4,20260518
+TC_L1_010,d2=0 => sflag=-2 identity,SUCCESS,1.0,0.0,1.0,1.0,20260519
+TC_L1_011,negative large d1 => sflag=-1,SUCCESS,-100.0,50.0,25.0,10.0,20260520
+TC_L1_012,d2 negative sq2 neg => sflag=-1,SUCCESS,1.0,-5.0,0.5,3.0,20260521
+TC_L1_013,standard case,SUCCESS,10.0,2.0,0.5,0.3,20260524
+TC_L1_014,standard case d2>x1,SUCCESS,1.0,10.0,0.3,0.5,20260525
+TC_L1_015,pi and e test,SUCCESS,1.0,1.0,3.14159,2.71828,20260529
+TC_L2_001,near GAMSQ d1 scale trigger,SUCCESS,1.8e7,1.0,0.5,0.5,20260701
+TC_L2_002,near RGAMSQ d1 scale trigger,SUCCESS,5.0e-8,1.0,2.0,2.0,20260702
+TC_L2_003,near GAMSQ d2 large sq1>sq2,SUCCESS,1.0,1.8e7,3.0,0.5,20260703
+TC_L2_004,d1 huge sq1 overflow risk,SUCCESS,1.0e10,1.0,1.0e5,0.5,20260704
+TC_L2_005,d1 tiny sq1 underflow risk,SUCCESS,1.0e-10,1.0,1.0e-5,1.0,20260705
+TC_L2_006,iteration count check extreme,SUCCESS,1.0e15,1.0e15,1.0,1.0,20260706
+TC_L2_007,negative d2 sq2 neg path,SUCCESS,5.0,-3.0,2.0,1.0,20260707
+TC_L2_008,sp2 zero sflag=-2 path,SUCCESS,2.0,3.0,4.0,0.0,20260708
+TC_L2_009,sq1<sq2 sq2>=0 sflag=1 edge,SUCCESS,1.0,100.0,0.1,1.0,20260709
+TC_L2_010,boundary su>0 check sq1>sq2,SUCCESS,4.0,0.5,3.0,0.5,20260710

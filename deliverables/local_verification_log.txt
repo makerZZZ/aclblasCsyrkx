@@ -1,0 +1,35 @@
+# aclblasCsyrkx 本机（无 NPU）验证记录
+
+日期: 2026-11-04 23:25:56
+环境: CANN 9.2.1 (asc-devkit 9.2), x86_64 WSL2, 无 NPU
+
+## 1. ascend950 编译（build.sh --ops=csyrkx --soc=ascend950）
+结果: SUCCESS（libops_blas.so + csyrkx_test + blas_all_test）
+
+## 2. CPU 公式/精度/边界预验证
+loaded 1200 cases from test_cases/csyrkx_test.csv
+---------------- summary ----------------
+cases=1200 numerically-checked=925 fast-model-checked=226 skipped-large=30
+return-code mismatches : 0
+golden vs reference    : 0
+kernel model vs golden : 0
+RESULT: PASS
+
+## 3. 真实 host 入口负向/quick-return 校验
+null handle                        got=9 want=9 OK
+invalid uplo                       got=3 want=3 OK
+invalid trans                      got=3 want=3 OK
+negative n                         got=3 want=3 OK
+negative k                         got=3 want=3 OK
+lda < n (trans=N)                  got=3 want=3 OK
+lda < k (trans=T)                  got=3 want=3 OK
+ldb < n (trans=N)                  got=3 want=3 OK
+ldc < n                            got=3 want=3 OK
+null alpha                         got=3 want=3 OK
+null beta                          got=3 want=3 OK
+n0 trans=N quick return            got=0 want=0 OK
+n0 trans=T quick return            got=0 want=0 OK
+n0 null C success                  got=0 want=0 OK
+n0 invalid ldc (checked first)     got=3 want=3 OK
+n0 null alpha (checked first)      got=3 want=3 OK
+---- PASS (0 failure(s)) ----

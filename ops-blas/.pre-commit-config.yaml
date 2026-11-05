@@ -1,0 +1,32 @@
+# ---------------------------------------------------------------------------------------------------------
+# Copyright (c) 2026 Huawei Technologies Co., Ltd.
+# This program is free software, you can redistribute it and/or modify it under the terms and conditions of
+# CANN Open Software License Agreement Version 2.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+# See LICENSE in the root of the software repository for the full text of the License.
+# ---------------------------------------------------------------------------------------------------------
+repos:
+  - repo: https://gitcode.com/pre-commit-clang/mirrors-clang-format
+    rev: v18.1.8
+    hooks:
+      - id: clang-format
+        types_or: [c++, c]
+  - repo: local
+    hooks:
+      - id: check-pragma-once
+        name: Check #pragma once in headers
+        entry: bash scripts/ci/check_pragma_once.sh --files
+        language: system
+        types_or: [c, c++]
+        files: '\.(h|hpp)$'
+      - id: oat-check
+        name: OAT Compliance Check (Python)
+        entry: bash scripts/oat_check.sh
+        language: system
+        pass_filenames: true
+        require_serial: true
+        types: [file]
+        stages: [pre-commit]
+        verbose: true

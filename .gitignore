@@ -1,0 +1,9 @@
+local_deps
+build_local_opsblas
+
+# 本机 IDE 配置（含绝对路径）
+.vscode/
+
+# 本地验证可执行文件（由 local_verify/*.cpp 重新编译生成）
+local_verify/csyrkx_host_negative
+local_verify/csyrkx_cpu_check

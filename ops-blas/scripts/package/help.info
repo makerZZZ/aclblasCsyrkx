@@ -1,0 +1,8 @@
+  --install                 Install ops_blas libraries (libops_blas.so, libops_blasLt.so, headers)
+    --install-path=<path>    Specify installation path (default: /usr/local/Ascend for root, ~/Ascend for user)
+                            Files will be installed to <path>/cann/lib64/ and <path>/cann/include/
+    --quiet                  Quiet mode, skip confirmations
+  --uninstall                Uninstall ops_blas from the specified path
+    --install-path=<path>    Specify installation path to uninstall
+    --quiet                  Quiet mode
+  --help                     Show this help

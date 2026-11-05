@@ -1,0 +1,57 @@
+case_name,description,expect_result,n,incx,incy,sparam0,sparam1,sparam2,sparam3,sparam4,random_seed
+TC_L0_001,General modified rotation flag=-1 unit stride 128,SUCCESS,128,1,1,-1.0,0.75,-0.25,0.5,1.5,20260411
+TC_L0_002,Flag zero rotation unit stride 1024,SUCCESS,1024,1,1,0.0,0.0,0.6,-1.1,0.0,20260412
+TC_L0_003,Positive flag rotation unit stride 2048,SUCCESS,2048,1,1,1.0,1.25,0.0,0.0,0.8,20260413
+TC_L0_004,No-op flag=-2 identity check,SUCCESS,4,1,1,-2.0,0.0,0.0,0.0,0.0,20260414
+TC_L0_005,Single element n=1,SUCCESS,1,1,1,-1.0,0.75,-0.25,0.5,1.5,20260415
+TC_L0_006,Positive strides incx=2 incy=3,SUCCESS,3072,2,3,-1.0,0.3,-0.8,1.4,0.6,20260416
+TC_L1_001,Small flag zero n=2,SUCCESS,2,1,1,0.0,0.0,0.6,-1.1,0.0,20260417
+TC_L1_002,Small positive flag n=3,SUCCESS,3,1,1,1.0,1.25,0.0,0.0,0.8,20260418
+TC_L1_003,Negative coefficients,SUCCESS,5,1,1,-1.0,-0.5,0.75,1.25,-1.0,20260419
+TC_L1_004,Positive x stride incx=2,SUCCESS,7,2,1,0.0,0.0,0.35,-0.9,0.0,20260420
+TC_L1_005,Negative y stride incy=-1,SUCCESS,8,1,-1,1.0,1.25,0.0,0.0,0.8,20260421
+TC_L1_006,Negative x stride incx=-1,SUCCESS,9,-1,1,-1.0,-0.5,0.75,1.25,-1.0,20260422
+TC_L1_007,Block tail length n=31,SUCCESS,31,1,1,-1.0,0.75,-0.25,0.5,1.5,20260423
+TC_L1_008,Exact block length n=32,SUCCESS,32,1,1,0.0,0.0,0.6,-1.1,0.0,20260424
+TC_L1_009,Block plus tail n=33,SUCCESS,33,1,1,1.0,1.25,0.0,0.0,0.8,20260425
+TC_L1_010,512B block minus one n=127,SUCCESS,127,1,1,-1.0,1.1,-0.3,0.2,0.9,20260426
+TC_L1_011,512B block plus one n=129,SUCCESS,129,1,1,0.0,0.0,0.35,-0.9,0.0,20260427
+TC_L1_012,Two 512B blocks minus one strided n=255,SUCCESS,255,2,1,0.0,0.0,0.35,-0.9,0.0,20260428
+TC_L1_013,Two 512B blocks n=256,SUCCESS,256,1,1,-1.0,1.1,-0.3,0.2,0.9,20260429
+TC_L1_014,No-op mixed strides n=257,SUCCESS,257,3,-2,-2.0,0.0,0.0,0.0,0.0,20260430
+TC_L1_015,Large negative strides n=2049,SUCCESS,2049,-2,-3,1.0,1.25,0.0,0.0,0.8,20260431
+TC_L1_016,Large positive flag negative strides n=3073,SUCCESS,3073,-2,-3,1.0,1.25,0.0,0.0,0.8,20260432
+TC_L1_017,Large general strided n=4097,SUCCESS,4097,4,-5,-1.0,-0.4,0.15,1.2,0.7,20260603
+TC_L1_018,Large flag zero negative strides n=8193,SUCCESS,8193,-3,-2,0.0,0.0,1.2,-0.45,0.0,20260434
+TC_L1_019,Large unit stride positive flag n=16385,SUCCESS,16385,1,1,1.0,0.95,0.0,0.0,1.05,20260604
+TC_L1_020,Medium unit stride general n=32768,SUCCESS,32768,1,1,-1.0,1.1,-0.3,0.2,0.9,20260436
+TC_L1_021,Large unit stride flag zero n=65536,SUCCESS,65536,1,1,0.0,0.0,1.2,-0.45,0.0,20260437
+TC_L1_022,Stress unit stride positive flag n=131072,SUCCESS,131072,1,1,1.0,0.95,0.0,0.0,1.05,20260605
+TC_L1_023,Regular 4096 unit stride general,SUCCESS,4096,1,1,-1.0,0.75,-0.25,0.5,1.5,20260439
+TC_L1_024,Regular 5120 negative y stride,SUCCESS,5120,1,-2,1.0,0.85,0.0,0.0,1.2,20260440
+TC_L1_025,Regular 6400 negative x stride,SUCCESS,6400,-2,1,0.0,0.0,0.35,-0.9,0.0,20260441
+TC_L1_026,Regular 8192 unit stride general,SUCCESS,8192,1,1,-1.0,-0.4,0.15,1.2,0.7,20260442
+TC_L1_027,Device strided 512 general,SUCCESS,512,2,3,-1.0,0.75,-0.25,0.5,1.5,20260443
+TC_L1_028,Device negative stride 513 positive,SUCCESS,513,-2,-3,1.0,0.85,0.0,0.0,1.2,20260444
+TC_L2_001,n equals zero immediate return,SUCCESS,0,1,1,-1.0,0.75,-0.25,0.5,1.5,20260445
+TC_L2_002,n less than zero immediate return,SUCCESS,-1,1,1,-1.0,0.75,-0.25,0.5,1.5,20260446
+TC_L1_029,DMA dual negative stride flag=-1,SUCCESS,128,-1,-1,-1.0,0.75,-0.25,0.5,1.5,20260447
+TC_L1_030,DMA dual negative stride flag=0,SUCCESS,256,-1,-1,0.0,0.0,0.6,-1.1,0.0,20260448
+TC_L1_031,DMA dual negative stride flag=1,SUCCESS,512,-1,-1,1.0,0.85,0.0,0.0,1.2,20260449
+TC_L1_032,DMA dual negative stride no-op,SUCCESS,64,-1,-1,-2.0,0.0,0.0,0.0,0.0,20260450
+TC_L1_033,SIMT large pos strides flag=0 n=8192,SUCCESS,8192,5,7,0.0,0.0,0.35,-0.9,0.0,20260451
+TC_L1_034,SIMT incx=1 incy=-2 flag=-1,SUCCESS,3333,1,-2,-1.0,1.5,-0.8,2.0,1.3,20260452
+TC_L1_035,SIMT n=256 strided flag=0,SUCCESS,256,3,2,0.0,0.0,0.6,-1.1,0.0,20260453
+TC_L1_036,DMA n=248 block boundary flag=-1,SUCCESS,248,1,1,-1.0,2.0,-1.5,3.0,0.8,20260454
+TC_L1_037,DMA n=496 double block flag=0,SUCCESS,496,1,1,0.0,0.0,1.2,-0.45,0.0,20260455
+TC_L1_038,SIMT all H coefficients >=1 flag=-1,SUCCESS,4096,3,5,-1.0,2.0,1.5,3.0,2.5,20260456
+TC_L1_039,DMA all H coefficients zero flag=-1,SUCCESS,64,1,1,-1.0,0.0,0.0,0.0,0.0,20260457
+TC_L1_040,SIMT zero H matrix flag=-1 n=512,SUCCESS,512,-2,3,-1.0,0.0,0.0,0.0,0.0,20260458
+TC_L2_003,Large 256K unit stride flag=-1,SUCCESS,262144,1,1,-1.0,0.75,-0.25,0.5,1.5,20260701
+TC_L2_004,Large 512K unit stride flag=0,SUCCESS,524288,1,1,0.0,0.0,0.6,-1.1,0.0,20260702
+TC_L2_005,Large 1M unit stride flag=1,SUCCESS,1048576,1,1,1.0,0.95,0.0,0.0,1.05,20260703
+TC_L2_006,Large 256K strided flag=-1,SUCCESS,262144,2,3,-1.0,1.5,-0.8,2.0,1.3,20260704
+TC_L2_007,Large 512K negative y stride flag=0,SUCCESS,524288,1,-2,0.0,0.0,1.2,-0.45,0.0,20260705
+TC_L2_008,Large 1M mixed stride flag=1,SUCCESS,1048576,3,5,1.0,0.85,0.0,0.0,1.2,20260706
+TC_L2_009,Large 512K negative x stride flag=-1,SUCCESS,524288,-2,1,-1.0,-0.4,0.15,1.2,0.7,20260707
+TC_L2_010,Large 256K dual negative stride flag=0,SUCCESS,262144,-1,-1,0.0,0.0,0.35,-0.9,0.0,20260708
